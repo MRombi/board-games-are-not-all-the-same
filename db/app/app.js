@@ -1,9 +1,9 @@
 const express = require("express");
-const {getCategories}  = require("./controllers/categories.c");
-const {getReviewById}  = require("./controllers/reviews.c"); 
+const { getCategories } = require("./controllers/categories.c");
+const { getReviewById } = require("./controllers/reviews.c");
 const app = express();
 
-app.use(express.json())
+app.use(express.json());
 
 app.get("/api/categories", getCategories);
 
