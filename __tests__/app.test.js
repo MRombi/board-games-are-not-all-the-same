@@ -19,7 +19,10 @@ describe("GET: /api/categories", () => {
       .expect(200)
       .then(({ body }) => {
         expect(body.categories).toHaveLength(4);
-        expect(body.categories[0]).toEqual({ slug: 'euro game', description: 'Abstact games that involve little luck' });
+        expect(body.categories[0]).toEqual({
+          slug: "euro game",
+          description: "Abstact games that involve little luck",
+        });
         body.categories.forEach((category) => {
           expect.objectContaining({
             slug: expect.any(String),
@@ -39,4 +42,27 @@ describe("ERRORS - GET: /api/categories", () => {
         expect(body.message).toBe("Path not found");
       });
   });
-})
+});
+
+describe.only("GET: /api/reviews", () => {
+  describe("GET: /api/reviews/review_id", () => {
+    test("200:  returns a review object, with the following properties: review_id, title, review_body, designer, review_img_url, votes, category field which references the slug in the categories table, owner field that references a user''s primary key (username), created_at", () => {
+      return request(app)
+        .get("/api/reviews/1")
+        .expect(200)
+        .then(({ body }) => {
+          expect(typeof body.review).toBe("object");
+          expect.objectContaining({
+            title: expect.any(String),
+            designer: expect.any(String),
+            owner: expect.any(String),
+            review_img_url: expect.any(String),
+            review_body: expect.any(String),
+            category: expect.any(String),
+            created_at: expect.any(Number),
+            votes: expect.any(Number),
+          });
+        });
+    });
+  });
+});
