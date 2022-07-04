@@ -19,6 +19,7 @@ describe("GET: /api/categories", () => {
       .expect(200)
       .then(({ body }) => {
         expect(body.categories).toHaveLength(4);
+        expect(body.categories[0]).toEqual({ slug: 'euro game', description: 'Abstact games that involve little luck' });
         body.categories.forEach((category) => {
           expect.objectContaining({
             slug: expect.any(String),
@@ -28,3 +29,14 @@ describe("GET: /api/categories", () => {
       });
   });
 });
+
+describe("ERRORS - GET: /api/categories", () => {
+  test("404: bad path if wrong endpoint written", () => {
+    return request(app)
+      .get("/api/testing")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.message).toBe("Path not found");
+      });
+  });
+})
