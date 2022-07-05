@@ -47,14 +47,15 @@ describe("/api/reviews/review_id", () => {
   describe("GET: /api/reviews/review_id", () => {
     test("200:  returns a review object, with the following properties: review_id, title, review_body, designer, review_img_url, votes, category field which references the slug in the categories table, owner field that references a user''s primary key (username), created_at", () => {
       return request(app)
-        .get("/api/reviews/1")
+        .get("/api/reviews/2")
         .expect(200)
         .then(({ body }) => {
           expect(typeof body.review).toBe("object");
-          expect(body.review.review_id).toBe(1);
-          expect(body.review.title).toBe("Agricola");
-          expect(body.review.designer).toBe("Uwe Rosenberg");
-          expect(body.review.owner).toBe("mallionaire");
+          expect(body.review.review_id).toBe(2);
+          expect(body.review.title).toBe("Jenga");
+          expect(body.review.designer).toBe("Leslie Scott");
+          expect(body.review.owner).toBe("philippaclaire9");
+          expect(body.review.comment_count).toBe("3")
         });
     });
   });
