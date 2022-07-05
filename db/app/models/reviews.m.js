@@ -5,7 +5,21 @@ exports.selectReviewById = (id) => {
     return connection
       .query(
         `
-  SELECT * FROM reviews WHERE review_id=$1;
+        SELECT 
+        reviews.review_id,
+        reviews.title,
+				reviews.category,
+				reviews.designer,
+				reviews.owner,
+				reviews.review_body,
+				reviews.review_img_url,
+				reviews.created_at,
+				reviews.votes, 
+        COUNT(comments.body) AS comment_count
+        FROM reviews
+        LEFT JOIN comments ON comments.review_id = reviews.review_id
+        WHERE reviews.review_id = $1
+        GROUP BY reviews.review_id;
   `,
         [id]
       )
