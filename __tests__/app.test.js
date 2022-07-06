@@ -165,11 +165,15 @@ describe("GET: /api/users", () => {
 });
 
 describe("GET: /api/reviews", () => {
-  test("200:  returns an array of review objects, each of which should have the properties of owner, title review_id, category, review_img_url, created_at, votes, review_body, designer, comment_count", () => {
+  test("200:  returns an array of review objects, each of which should have the properties of owner, title review_id, category, review_img_url, created_at, votes, review_body, designer, comment_count ordered by date in descending order", () => {
     return request(app)
       .get("/api/reviews")
       .expect(200)
       .then(({ body }) => {
+        expect(body.reviews).toBeSortedBy("created_at", {
+          descending: true,
+          coerce: true
+        });
         expect(body.reviews[0]).toEqual({
           review_id: 7,
           title: "Mollit elit qui incididunt veniam occaecat cupidatat",
@@ -193,6 +197,46 @@ describe("GET: /api/reviews", () => {
         .expect(404)
         .then(({ body }) => {
           expect(body.message).toBe("Path not found");
+        });
+    });
+  });
+});
+
+describe("/api/reviews/:review_id/comments", () => {
+  describe("GET: /api/reviews/review_id/comments", () => {
+    test("200:  returns an array of comments, with the following properties: comment_id, body, votes, author, review_id, created_at,", () => {
+      return request(app)
+        .get("/api/reviews/2/comments")
+        .expect(200)
+        .then(({ body }) => {
+          body.comments.forEach((comment) => {
+            expect.objectContaining({
+              body: expect.any(String),
+              votes: expect.any(Number),
+              author: expect.any(String),
+              review_id: expect.any(Number),
+              created_at: expect.any(String),
+            });
+          });
+        });
+    });
+  });
+
+  describe("ERRORS - GET: /api/reviews/:review_id/comments", () => {
+    test("404: bad path if review_id is not valid id number", () => {
+      return request(app)
+        .get("/api/reviews/40/comments")
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.message).toBe("Path not found, invilid review_id");
+        });
+    });
+    test("400: bad request if review_id is not a number", () => {
+      return request(app)
+        .get("/api/reviews/test/comments")
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.message).toBe("Bad request, review_id must be a number");
         });
     });
   });
