@@ -85,3 +85,30 @@ exports.updateReviewById = (id, votes) => {
     });
   }
 };
+
+exports.selectReviews = () => {
+  return connection
+    .query(
+      `
+  SELECT 
+  reviews.owner,
+  reviews.title,
+  reviews.review_id,
+  reviews.category,
+  reviews.designer,
+  reviews.review_body,
+  reviews.review_img_url,
+  reviews.created_at,
+  reviews.votes, 
+  COUNT(comments.body) AS comment_count
+  FROM reviews
+  LEFT JOIN comments ON comments.review_id = reviews.review_id
+  GROUP BY reviews.review_id
+  ORDER BY created_at DESC;
+  ;
+  `
+    )
+    .then((result) => {
+      return result.rows;
+    });
+};
