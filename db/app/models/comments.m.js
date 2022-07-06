@@ -1,11 +1,11 @@
 const connection = require("../../connection");
 
-
 exports.selectCommentByReviewId = (id) => {
   if (isNaN(id) === false) {
-    return connection
-      .query(
-        `
+    if (id)
+      return connection
+        .query(
+          `
         SELECT 
         comments.comment_id,
         comments.body,
@@ -16,34 +16,63 @@ exports.selectCommentByReviewId = (id) => {
         FROM comments
         WHERE comments.review_id = $1;
   `,
-        [id]
-      )
-      .then((result) => {
-        if (result.rows.length > 0) {
+          [id]
+        )
+        .then((result) => {
           return result.rows;
-        } else {
-          return Promise.reject({
-            status: 404,
-            message: "Path not found, invilid review_id",
-          });
-        }
-      });
+        });
   } else {
     return Promise.reject({
       status: 400,
       message: "Bad request, review_id must be a number",
     });
   }
-}
-// GET /api/reviews/:review_id/comments
+};
 
-// Responds with:
+exports.insertCommentByReviewId = (id, comments) => {
+  let name = Object.values(comments)[0];
+  let comment = Object.values(comments)[1];
+  let username = Object.keys(comments)[0];
+  let body = Object.keys(comments)[1];
 
-// an array of comments for the given review_id of which each comment should have the following properties:
-
-// comment_id
-// votes
-// created_at
-// author which is the username from the users table
-// body
-// review_id
+  if (username !== "username" || body !== "body") {
+    return Promise.reject({
+      status: 404,
+      message: "bad request, the request body must contain username and body",
+    });
+  } else if (isNaN(id) === false) {
+    if (typeof name !== "string" || typeof comment !== "string") {
+      return Promise.reject({
+        status: 400,
+        message: "Bad request, vote must be a number",
+      });
+    } else {
+      return connection
+        .query(
+          `
+  INSERT INTO comments 
+  (body, review_id, author)
+  VALUES
+  ($1, $2, $3)
+  RETURNING body;
+  `,
+          [comment, id, name]
+        )
+        .then((result) => {
+          if (result.rows.length > 0) {
+            return result.rows[0].body;
+          } else {
+            return Promise.reject({
+              status: 404,
+              message: "Path not found, invilid review_id",
+            });
+          }
+        });
+    }
+  } else {
+    return Promise.reject({
+      status: 400,
+      message: "Bad request, review_id must be a number",
+    });
+  }
+};
