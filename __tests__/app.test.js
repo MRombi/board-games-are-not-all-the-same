@@ -220,8 +220,26 @@ describe("/api/reviews/:review_id/comments", () => {
           });
         });
     });
+    test("200:  returns an array of comments, with the following properties: comment_id, body, votes, author, review_id, created_at,", () => {
+      return request(app)
+        .get("/api/reviews/1/comments")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.comments).toEqual([])
+        });
+    });
   });
-
+  describe("POST: /api/reviews/review_id/comments", () => {
+    test("201:  changes specific details on the indicated endpoint depending on the submitted body", () => {
+      return request(app)
+        .post("/api/reviews/1/comments")
+        .send({ username: "mallionaire", body: "Something valuable for our TESTS" })
+        .expect(201)
+        .then(({ body }) => {
+          expect(body.comment).toBe("Something valuable for our TESTS");
+        });
+    });
+  });
   describe("ERRORS - GET: /api/reviews/:review_id/comments", () => {
     test("404: bad path if review_id is not valid id number", () => {
       return request(app)
@@ -237,6 +255,37 @@ describe("/api/reviews/:review_id/comments", () => {
         .expect(400)
         .then(({ body }) => {
           expect(body.message).toBe("Bad request, review_id must be a number");
+        });
+    });
+  });
+  describe("ERRORS - POST: /api/reviews/:review_id/comments", () => {
+    test("404: bad path if review_id is not valid id number", () => {
+      return request(app)
+        .post("/api/reviews/40/comments")
+        .send({ username: "mallionaire", body: "Something valuable for our TESTS" })
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.message).toBe("Path not found, invilid review_id");
+        });
+    });
+    test("400: bad request if review_id is not a number", () => {
+      return request(app)
+        .post("/api/reviews/test/comments")
+        .send({ username: "mallionaire", body: "Something valuable for our TESTS" })
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.message).toBe("Bad request, review_id must be a number");
+        });
+    });
+    test("400:  bad request if the body of the request does not contain an object with keys username or body", () => {
+      return request(app)
+        .post("/api/reviews/1/comments")
+        .send({ us3rn4m3: "mallionaire", body: "Something valuable for our TESTS" })
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.message).toBe(
+            "bad request, the request body must contain username and body"
+          );
         });
     });
   });
