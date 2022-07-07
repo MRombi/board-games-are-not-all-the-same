@@ -23,11 +23,19 @@ exports.patchReviewById = (req, res, next) => {
 }
 
 exports.getReviews = (req, res, next) => {
-  selectReviews()
-    .then((reviews) => {
+  const query = req.query;
+  const queryLength = Object.keys(query);
+  if (queryLength.length > 0) {
+    selectReviews(query)
+      .then((reviews) => {
+        res.status(200).send({ reviews });
+      })
+      .catch((err) => {
+        next(err);
+      });
+  } else {
+    selectReviews().then((reviews) => {
       res.status(200).send({ reviews });
-    })
-    .catch((err) => {
-      next(err);
     });
+  }
 }
