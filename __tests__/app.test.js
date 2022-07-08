@@ -8,6 +8,7 @@ const {
 const db = require("../db/connection");
 const request = require("supertest");
 const app = require("../app/app");
+const endpoints = require("../endpoints.json");
 
 beforeEach(() => seed({ categoryData, commentData, reviewData, userData }));
 afterAll(() => db.end());
@@ -424,7 +425,7 @@ describe("/api/reviews/:review_id/comments", () => {
 
 describe("/api/comments/:comment_id", () => {
   describe("DELETE /api/comments/:comment_id", () => {
-    test.only("status:204, responds with an empty response body", () => {
+    test("status:204, responds with an empty response body", () => {
       return request(app)
         .get("/api/comments/1")
         .expect(200)
@@ -453,6 +454,19 @@ describe("/api/comments/:comment_id", () => {
         .expect(400)
         .then(({ body }) => {
           expect(body.message).toBe("Bad request, comment_id must be a number");
+        });
+    });
+  });
+});
+
+describe("/api", () => {
+  describe("GET /api", () => {
+    test("200: returns a description of all the endpoints from the endpoints.json file", () => {
+      return request(app)
+        .get("/api")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body).toEqual({ endpoints });
         });
     });
   });
