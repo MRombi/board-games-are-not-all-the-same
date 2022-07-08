@@ -1,6 +1,6 @@
 const connection = require("../../db/connection");
 
-exports.selectCommentByRId = (id) => {
+exports.selectCommentById = (id) => {
   if (isNaN(id) === false) {
     if (id)
       return connection
@@ -12,17 +12,17 @@ exports.selectCommentByRId = (id) => {
         WHERE comments.comment_id = $1;
   `,
           [id]
-        ).then((result) => {
-            if (result.rows.length > 0) {
-              return result.rows[0];
-            } else {
-              return Promise.reject({
-                status: 404,
-                message: "Path not found, invilid comment_id",
-              });
-            }
-          });
-
+        )
+        .then((result) => {
+          if (result.rows.length > 0) {
+            return result.rows[0];
+          } else {
+            return Promise.reject({
+              status: 404,
+              message: "Path not found, invilid comment_id",
+            });
+          }
+        });
   } else {
     return Promise.reject({
       status: 400,
