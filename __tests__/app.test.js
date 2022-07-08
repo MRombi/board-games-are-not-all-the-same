@@ -311,7 +311,7 @@ describe("GET: /api/reviews", () => {
 
 describe("/api/reviews/:review_id/comments", () => {
   describe("GET: /api/reviews/review_id/comments", () => {
-    test("200:  returns an array of comments, with the following properties: comment_id, body, votes, author, review_id, created_at,", () => {
+    test.only("200:  returns an array of comments, with the following properties: comment_id, body, votes, author, review_id, created_at,", () => {
       return request(app)
         .get("/api/reviews/2/comments")
         .expect(200)
