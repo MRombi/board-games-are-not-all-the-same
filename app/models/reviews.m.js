@@ -1,7 +1,7 @@
-const connection = require("../../connection");
+const connection = require("../../db/connection");
 const { findCategory } = require("../../utils/find-category");
-const reviews = require("../../data/test-data/reviews");
-const { keys } = require("../../data/test-data/categories");
+const reviews = require("../../db/data/test-data/reviews");
+const { keys } = require("../../db/data/test-data/categories");
 
 exports.selectReviewById = (id) => {
   if (isNaN(id) === false) {

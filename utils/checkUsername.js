@@ -1,4 +1,4 @@
-const connection = require("../connection");
+const connection = require("../db/connection");
 
 exports.checkUsernameById = (id, username) => {
   if (username !== "string") {

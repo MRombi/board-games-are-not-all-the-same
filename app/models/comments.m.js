@@ -1,4 +1,4 @@
-const connection = require("../../connection");
+const connection = require("../../db/connection");
 
 exports.selectCommentByReviewId = (id) => {
   if (isNaN(id) === false) {
