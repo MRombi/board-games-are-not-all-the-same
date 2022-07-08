@@ -2,6 +2,7 @@ const {
   selectCommentByReviewId,
   insertCommentByReviewId,
   removeCommentById,
+  selectCommentByRId,
 } = require("../models/comments.m");
 
 const { selectReviewById } = require("../models/reviews.m");
@@ -43,8 +44,12 @@ exports.postCommentByReviewId = (req, res, next) => {
 
 exports.deleteCommentById = (req, res, next) => {
   const { comment_id } = req.params;
-  removeCommentById(comment_id)
-    .then((comment) => {
+  const allPromises = Promise.all([
+    selectCommentByRId(comment_id),
+    removeCommentById(comment_id),
+  ]);
+  allPromises
+    .then((result) => {
       res.sendStatus(204);
     })
     .catch((err) => {

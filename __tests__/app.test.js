@@ -428,7 +428,15 @@ describe("/api/comments/:comment_id", () => {
       return request(app).delete("/api/comments/1").expect(204);
     });
   });
-  describe("ERRORS - DELETE: /api/comments/:comment_ids", () => {
+  describe("ERRORS - DELETE: /api/comments/:comment_id", () => {
+    test("404: bad path if review_id is not valid id number", () => {
+      return request(app)
+        .delete("/api/comments/9999")
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.message).toBe("Path not found, invilid comment_id");
+        });
+    });
     test("400: bad request if review_id is not a number", () => {
       return request(app)
         .delete("/api/comments/test")
