@@ -14,7 +14,7 @@ exports.getCommentByReviewId = (req, res, next) => {
   ]);
   allPromises
     .then((results) => {
-      comments = results[1];
+     let comments = results[1];
       res.status(200).send({ comments });
     })
     .catch((err) => {
