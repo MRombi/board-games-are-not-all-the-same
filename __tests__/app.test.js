@@ -230,7 +230,6 @@ describe("GET: /api/reviews", () => {
       .expect(200)
       .then(({ body }) => {
         expect(body.reviews).toEqual([]);
-        
       });
   });
   test("200: returns sorted and ordered at the same time with multiple queries", () => {
@@ -418,6 +417,42 @@ describe("/api/reviews/:review_id/comments", () => {
           expect(body.message).toBe(
             "bad request, the request body must contain username and body"
           );
+        });
+    });
+  });
+});
+
+describe("/api/comments/:comment_id", () => {
+  describe("DELETE /api/comments/:comment_id", () => {
+    test.only("status:204, responds with an empty response body", () => {
+      return request(app)
+        .get("/api/comments/1")
+        .expect(200)
+        .then(() => {
+          return request(app)
+            .delete("/api/comments/1")
+            .expect(204)
+            .then(() => {
+              return request(app).get("/api/comments/1").expect(404);
+            });
+        });
+    });
+  });
+  describe("ERRORS - DELETE: /api/comments/:comment_id", () => {
+    test("404: bad path if review_id is not valid id number", () => {
+      return request(app)
+        .delete("/api/comments/9999")
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.message).toBe("Path not found, invilid comment_id");
+        });
+    });
+    test("400: bad request if review_id is not a number", () => {
+      return request(app)
+        .delete("/api/comments/test")
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.message).toBe("Bad request, comment_id must be a number");
         });
     });
   });

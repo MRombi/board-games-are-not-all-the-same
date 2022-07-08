@@ -2,7 +2,7 @@ const express = require("express");
 const { getCategories } = require("./controllers/categories.c");
 const { getReviewById, patchReviewById, getReviews } = require("./controllers/reviews.c");
 const { getUsers } = require("./controllers/users.c");
-const { getCommentByReviewId, postCommentByReviewId } = require("./controllers/comments.c");
+const { getCommentByReviewId, postCommentByReviewId, deleteCommentById, getCommentById } = require("./controllers/comments.c");
 const app = express();
 
 app.use(express.json());
@@ -17,6 +17,9 @@ app.get("/api/users", getUsers)
 
 app.get("/api/reviews/:review_id/comments", getCommentByReviewId);
 app.post("/api/reviews/:review_id/comments", postCommentByReviewId);
+
+app.get("/api/comments/:comment_id", getCommentById)
+app.delete("/api/comments/:comment_id", deleteCommentById);
 
 app.use("*", (req, res) => {
   res.status(404).send({ message: "Path not found" });
