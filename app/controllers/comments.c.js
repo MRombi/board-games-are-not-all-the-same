@@ -1,6 +1,7 @@
 const {
   selectCommentByReviewId,
   insertCommentByReviewId,
+  removeCommentById,
 } = require("../models/comments.m");
 
 const { selectReviewById } = require("../models/reviews.m");
@@ -14,7 +15,7 @@ exports.getCommentByReviewId = (req, res, next) => {
   ]);
   allPromises
     .then((results) => {
-     let comments = results[1];
+      let comments = results[1];
       res.status(200).send({ comments });
     })
     .catch((err) => {
@@ -32,8 +33,19 @@ exports.postCommentByReviewId = (req, res, next) => {
   ]);
   allPromises
     .then((results) => {
-     let comment = results[2];
+      let comment = results[2];
       res.status(201).send({ comment });
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+
+exports.deleteCommentById = (req, res, next) => {
+  const { comment_id } = req.params;
+  removeCommentById(comment_id)
+    .then((comment) => {
+      res.sendStatus(204);
     })
     .catch((err) => {
       next(err);

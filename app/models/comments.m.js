@@ -71,3 +71,23 @@ exports.insertCommentByReviewId = (id, comments) => {
     });
   }
 };
+
+exports.removeCommentById = (id) => {
+  if (isNaN(id) === false) {
+    return connection
+      .query(
+        `
+        DELETE FROM comments WHERE comment_id = $1;
+  `,
+        [id]
+      )
+      .then((result) => {
+        return result.rows;
+      });
+  } else {
+    return Promise.reject({
+      status: 400,
+      message: "Bad request, comment_id must be a number",
+    });
+  }
+};
