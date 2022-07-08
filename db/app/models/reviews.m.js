@@ -1,6 +1,7 @@
 const connection = require("../../connection");
 const { findCategory } = require("../../utils/find-category");
 const reviews = require("../../data/test-data/reviews");
+const { keys } = require("../../data/test-data/categories");
 
 exports.selectReviewById = (id) => {
   if (isNaN(id) === false) {
@@ -80,81 +81,77 @@ exports.updateReviewById = (id, votes) => {
   }
 };
 
-exports.selectReviews = (query = { sort_by: "created_at" }) => {
-  let methods = ["sort_by", "order", "category"];
-  let searchSort_by = "created_at";
-  let searchOrder = "DESC";
+exports.selectReviews = async ({
+  sort_by = "created_at",
+  order = "DESC",
+  category = "",
+  ...query
+}) => {
+  let correctQueries = new Set(["sort_by", "order", "category"]);
+
+  for (let key in query) {
+    if (!correctQueries.has(key) && key.length > 0) {
+      return Promise.reject({
+        status: 400,
+        message: "Bad request, incorrect method",
+      });
+    }
+  }
+
   let whereStr = "";
-  const request = Object.keys(query);
-  if (!methods.includes(request[0])) {
+  let sortByOptions = new Set([
+    "title",
+    "designer",
+    "owner",
+    "review_img_url",
+    "review_body",
+    "category",
+    "created_at",
+    "votes",
+  ]);
+  let checkSortOptions = sortByOptions.has(sort_by);
+
+  if (checkSortOptions === false) {
     return Promise.reject({
       status: 400,
-      message: "Bad request, incorrect method",
+      message: "Bad request, incorrect sort_by",
+    });
+  } else {
+    searchSort_by = sort_by;
+  }
+
+  if (order.toLowerCase() !== "desc" && order.toLowerCase() !== "asc") {
+    return Promise.reject({
+      status: 400,
+      message: "Bad request, incorrect order",
     });
   }
-  if ("sort_by" in query) {
-    const sort_by = query.sort_by;
-    let sortByOptions = [
-      "title",
-      "designer",
-      "owner",
-      "review_img_url",
-      "review_body",
-      "category",
-      "created_at",
-      "votes",
-    ];
-    searchSort_by = sortByOptions.find(
-      (elem) => elem.toLowerCase() === sort_by
-    );
-    if (!sortByOptions.includes(sort_by)) {
-      return Promise.reject({
-        status: 400,
-        message: "Bad request, incorrect sort_by",
-      });
-    }
-  }
-  if ("order" in query) {
-    const order = query.order;
-    let orderOptions = ["asc", "desc"];
-    searchOrder = orderOptions.find((elem) => elem.toLowerCase() === order);
-    if (!orderOptions.includes(order)) {
-      return Promise.reject({
-        status: 400,
-        message: "Bad request, incorrect order",
-      });
-    }
-  }
-  if ("category" in query) {
-    const categorySet = findCategory(reviews);
-    const category = query.category;
-    if (Array.isArray(category)) {
-      category.forEach((categoryName, i) => {
-        if (!categorySet.has(categoryName)) {
-          return Promise.reject({
-            status: 400,
-            message: "Bad request, incorrect category",
-          });
-        } else if (categorySet.has(categoryName) && i === 0) {
-          whereStr = `WHERE category = '${categoryName}'`;
-        } else if (categorySet.has(categoryName) && i > 0) {
-          whereStr += ` OR category = '${categoryName}'`;
-        }
-      });
-    }
-    if (typeof category === "string") {
-      whereStr = `WHERE category = '${category}'`;
-    }
 
-    if (!Array.isArray(category)) {
-      if (!categorySet.has(category)) {
+  const categorySet = await findCategory();
+  if (Array.isArray(category)) {
+    for (let i = 0; i < category.length; i++) {
+      if (!categorySet.has(category[i])) {
         return Promise.reject({
           status: 400,
           message: "Bad request, incorrect category",
         });
+      } else if (categorySet.has(category[i]) && i === 0) {
+        whereStr = `WHERE category = '${category[i]}'`;
+      } else if (categorySet.has(category[i]) && i > 0) {
+        whereStr += ` OR category = '${category[i]}'`;
       }
     }
+  } else if (typeof category === "string") {
+    if (!categorySet.has(category) && category.length > 0) {
+      return Promise.reject({
+        status: 400,
+        message: "Bad request, incorrect category",
+      });
+    } else if (category.length !== 0) {
+      whereStr = `WHERE category = '${category}'`;
+    }
   }
+
   return connection
     .query(
       `
@@ -165,7 +162,7 @@ exports.selectReviews = (query = { sort_by: "created_at" }) => {
   LEFT JOIN comments ON comments.review_id = reviews.review_id
   ${whereStr}
   GROUP BY reviews.review_id
-  ORDER BY ${searchSort_by} ${searchOrder}; 
+  ORDER BY ${sort_by} ${order}; 
   `
     )
     .then((result) => {

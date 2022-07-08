@@ -1,4 +1,8 @@
-const { selectReviewById, updateReviewById, selectReviews } = require("../models/reviews.m");
+const {
+  selectReviewById,
+  updateReviewById,
+  selectReviews,
+} = require("../models/reviews.m");
 
 exports.getReviewById = (req, res, next) => {
   const { review_id } = req.params;
@@ -20,22 +24,15 @@ exports.patchReviewById = (req, res, next) => {
     .catch((err) => {
       next(err);
     });
-}
+};
 
 exports.getReviews = (req, res, next) => {
   const query = req.query;
-  const queryLength = Object.keys(query);
-  if (queryLength.length > 0) {
-    selectReviews(query)
-      .then((reviews) => {
-        res.status(200).send({ reviews });
-      })
-      .catch((err) => {
-        next(err);
-      });
-  } else {
-    selectReviews().then((reviews) => {
+  selectReviews(query)
+    .then((reviews) => {
       res.status(200).send({ reviews });
+    })
+    .catch((err) => {
+      next(err);
     });
-  }
-}
+};

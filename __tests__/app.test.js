@@ -218,6 +218,7 @@ describe("GET: /api/reviews", () => {
       .get("/api/reviews?category=dexterity")
       .expect(200)
       .then(({ body }) => {
+        expect(body.reviews[0].category).toBe("dexterity");
         body.reviews.forEach((review) => {
           expect(review.category).toBe("dexterity");
         });
@@ -232,7 +233,7 @@ describe("GET: /api/reviews", () => {
         expect(body.reviews[0].title).toBe("Agricola");
         expect(body.reviews).toBeSortedBy("title", {
           descending: false,
-          coerce: true,
+          coerce : true
         });
       });
   });
@@ -259,7 +260,15 @@ describe("GET: /api/reviews", () => {
   });
   test("400: bad request if method is wrong", () => {
     return request(app)
-      .get("/api/reviews/?test=euro game")
+      .get("/api/reviews?test=euro")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.message).toEqual("Bad request, incorrect method");
+      });
+  });
+  test("400: bad request if multiple methods are wrong", () => {
+    return request(app)
+      .get("/api/reviews?category=euro game&test2=dexterity")
       .expect(400)
       .then(({ body }) => {
         expect(body.message).toEqual("Bad request, incorrect method");
@@ -309,7 +318,7 @@ describe("/api/reviews/:review_id/comments", () => {
           });
         });
     });
-    test("200:  returns an array of comments, with the following properties: comment_id, body, votes, author, review_id, created_at,", () => {
+    test("200:  returns and empty array if the id is valid but there are no comments associated", () => {
       return request(app)
         .get("/api/reviews/1/comments")
         .expect(200)
