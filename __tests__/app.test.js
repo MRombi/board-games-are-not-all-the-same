@@ -424,8 +424,18 @@ describe("/api/reviews/:review_id/comments", () => {
 
 describe("/api/comments/:comment_id", () => {
   describe("DELETE /api/comments/:comment_id", () => {
-    test("status:204, responds with an empty response body", () => {
-      return request(app).delete("/api/comments/1").expect(204);
+    test.only("status:204, responds with an empty response body", () => {
+      return request(app)
+        .get("/api/comments/1")
+        .expect(200)
+        .then(() => {
+          return request(app)
+            .delete("/api/comments/1")
+            .expect(204)
+            .then(() => {
+              return request(app).get("/api/comments/1").expect(404);
+            });
+        });
     });
   });
   describe("ERRORS - DELETE: /api/comments/:comment_id", () => {

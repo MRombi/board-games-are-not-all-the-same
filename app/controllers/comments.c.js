@@ -56,3 +56,14 @@ exports.deleteCommentById = (req, res, next) => {
       next(err);
     });
 };
+
+exports.getCommentById = (req, res, next) => {
+  const { comment_id } = req.params;
+  selectCommentById(comment_id)
+    .then((comment) => {
+      res.status(200).send({ comment });
+    })
+    .catch((err) => {
+      next(err);
+    });
+}
