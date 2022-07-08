@@ -116,9 +116,7 @@ exports.selectReviews = async ({
       status: 400,
       message: "Bad request, incorrect sort_by",
     });
-  } else {
-    searchSort_by = sort_by;
-  }
+  } 
 
   if (order.toLowerCase() !== "desc" && order.toLowerCase() !== "asc") {
     return Promise.reject({

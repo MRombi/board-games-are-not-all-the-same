@@ -49,7 +49,7 @@ exports.insertCommentByReviewId = (id, comments) => {
   (body, review_id, author)
   VALUES
   ($1, $2, $3)
-  RETURNING author, body;
+  RETURNING review_id, author, body;
   `,
           [comment, id, name]
         )

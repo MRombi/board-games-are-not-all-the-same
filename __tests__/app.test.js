@@ -233,7 +233,7 @@ describe("GET: /api/reviews", () => {
         expect(body.reviews[0].title).toBe("Agricola");
         expect(body.reviews).toBeSortedBy("title", {
           descending: false,
-          coerce : true
+          coerce: true,
         });
       });
   });
@@ -338,6 +338,7 @@ describe("/api/reviews/:review_id/comments", () => {
         .expect(201)
         .then(({ body }) => {
           expect(body.comment).toEqual({
+            review_id: 1,
             author: "mallionaire",
             body: "Something valuable for our TESTS",
           });
