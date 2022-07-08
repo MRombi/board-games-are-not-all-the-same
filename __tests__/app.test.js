@@ -224,6 +224,15 @@ describe("GET: /api/reviews", () => {
         });
       });
   });
+  test("200: returns an empty array for a category that exists but that does not have any related review", () => {
+    return request(app)
+      .get("/api/reviews?category=children's games")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.reviews).toEqual([]);
+        
+      });
+  });
   test("200: returns sorted and ordered at the same time with multiple queries", () => {
     return request(app)
       .get("/api/reviews?sort_by=title&order=asc")
@@ -338,7 +347,7 @@ describe("/api/reviews/:review_id/comments", () => {
         .expect(201)
         .then(({ body }) => {
           expect(body.comment).toEqual({
-            review_id: 1,
+            comment_id: 7,
             author: "mallionaire",
             body: "Something valuable for our TESTS",
           });

@@ -116,7 +116,7 @@ exports.selectReviews = async ({
       status: 400,
       message: "Bad request, incorrect sort_by",
     });
-  } 
+  }
 
   if (order.toLowerCase() !== "desc" && order.toLowerCase() !== "asc") {
     return Promise.reject({
@@ -124,8 +124,8 @@ exports.selectReviews = async ({
       message: "Bad request, incorrect order",
     });
   }
-
   const categorySet = await findCategory();
+
   if (Array.isArray(category)) {
     for (let i = 0; i < category.length; i++) {
       if (!categorySet.has(category[i])) {
@@ -134,9 +134,9 @@ exports.selectReviews = async ({
           message: "Bad request, incorrect category",
         });
       } else if (categorySet.has(category[i]) && i === 0) {
-        whereStr = `WHERE category = '${category[i]}'`;
+        whereStr = `WHERE category = $${i+1}`;
       } else if (categorySet.has(category[i]) && i > 0) {
-        whereStr += ` OR category = '${category[i]}'`;
+        whereStr += ` OR category = $${i+1}`;
       }
     }
   } else if (typeof category === "string") {
@@ -146,13 +146,13 @@ exports.selectReviews = async ({
         message: "Bad request, incorrect category",
       });
     } else if (category.length !== 0) {
-      whereStr = `WHERE category = '${category}'`;
+      category = [category]
+      whereStr = `WHERE category = $1`;
     }
   }
-
   return connection
     .query(
-      `
+      `   
   SELECT 
   reviews.*,
   COUNT(comments.body) AS comment_count
@@ -160,8 +160,8 @@ exports.selectReviews = async ({
   LEFT JOIN comments ON comments.review_id = reviews.review_id
   ${whereStr}
   GROUP BY reviews.review_id
-  ORDER BY ${sort_by} ${order}; 
-  `
+  ORDER BY ${sort_by} ${order};
+  `, [...category]
     )
     .then((result) => {
       return result.rows;

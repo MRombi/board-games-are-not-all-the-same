@@ -5,13 +5,13 @@ exports.findCategory = () => {
     .query(
       `
         SELECT 
-        category
-        FROM reviews
+        slug
+        FROM categories
   `
     )
     .then((results) => {
       const arrOfCategories = results.rows.reduce((arr, category) => {
-        arr.push(category.category);
+        arr.push(category.slug);
         return arr;
       }, []);
       const set = new Set(arrOfCategories);
