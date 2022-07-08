@@ -1,4 +1,4 @@
-const connection = require("../../connection");
+const connection = require("../../db/connection");
 
 exports.selectCommentByReviewId = (id) => {
   if (isNaN(id) === false) {
@@ -7,12 +7,7 @@ exports.selectCommentByReviewId = (id) => {
         .query(
           `
         SELECT 
-        comments.comment_id,
-        comments.body,
-        comments.votes,
-        comments.author,
-        comments.review_id,
-        comments.created_at
+        comments.*
         FROM comments
         WHERE comments.review_id = $1;
   `,
@@ -44,7 +39,7 @@ exports.insertCommentByReviewId = (id, comments) => {
     if (typeof name !== "string" || typeof comment !== "string") {
       return Promise.reject({
         status: 400,
-        message: "Bad request, vote must be a number",
+        message: "Bad request, username and body must be strings",
       });
     } else {
       return connection
@@ -54,13 +49,13 @@ exports.insertCommentByReviewId = (id, comments) => {
   (body, review_id, author)
   VALUES
   ($1, $2, $3)
-  RETURNING body;
+  RETURNING comment_id, author, body;
   `,
           [comment, id, name]
         )
         .then((result) => {
           if (result.rows.length > 0) {
-            return result.rows[0].body;
+            return result.rows[0];
           } else {
             return Promise.reject({
               status: 404,

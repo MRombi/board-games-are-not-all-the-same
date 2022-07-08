@@ -4,6 +4,7 @@ const {
 } = require("../models/comments.m");
 
 const { selectReviewById } = require("../models/reviews.m");
+const { checkUsernameById } = require("../../utils/checkUsername");
 
 exports.getCommentByReviewId = (req, res, next) => {
   const { review_id } = req.params;
@@ -13,7 +14,7 @@ exports.getCommentByReviewId = (req, res, next) => {
   ]);
   allPromises
     .then((results) => {
-      comments = results[1];
+     let comments = results[1];
       res.status(200).send({ comments });
     })
     .catch((err) => {
@@ -23,14 +24,15 @@ exports.getCommentByReviewId = (req, res, next) => {
 
 exports.postCommentByReviewId = (req, res, next) => {
   const { review_id } = req.params;
+  const { username } = req.body;
   const allPromises = Promise.all([
     selectReviewById(review_id),
+    checkUsernameById(review_id, username),
     insertCommentByReviewId(review_id, req.body),
-    ,
   ]);
   allPromises
     .then((results) => {
-      comment = results[1];
+     let comment = results[2];
       res.status(201).send({ comment });
     })
     .catch((err) => {
