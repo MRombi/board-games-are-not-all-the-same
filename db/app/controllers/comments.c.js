@@ -32,7 +32,7 @@ exports.postCommentByReviewId = (req, res, next) => {
   ]);
   allPromises
     .then((results) => {
-      comment = results[2];
+     let comment = results[2];
       res.status(201).send({ comment });
     })
     .catch((err) => {
