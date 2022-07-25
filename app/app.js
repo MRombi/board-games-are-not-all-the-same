@@ -14,6 +14,9 @@ const {
 } = require("./controllers/comments.c");
 const endpoints = require("../endpoints.json");
 const app = express();
+const cors = require('cors');
+
+app.use(cors());
 
 app.use(express.json());
 
