@@ -77,7 +77,7 @@ describe("/api/reviews/review_id", () => {
         .get("/api/reviews/40")
         .expect(404)
         .then(({ body }) => {
-          expect(body.message).toBe("Path not found, invilid review_id");
+          expect(body.message).toBe("Path not found, invalid review_id");
         });
     });
     test("400: bad request if review_id is not a number", () => {
@@ -96,7 +96,7 @@ describe("/api/reviews/review_id", () => {
         .send({ inc_votes: 2 })
         .expect(404)
         .then(({ body }) => {
-          expect(body.message).toBe("Path not found, invilid review_id");
+          expect(body.message).toBe("Path not found, invalid review_id");
         });
     });
     test("400: bad request if review_id is not a number", () => {
@@ -360,7 +360,7 @@ describe("/api/reviews/:review_id/comments", () => {
         .get("/api/reviews/40/comments")
         .expect(404)
         .then(({ body }) => {
-          expect(body.message).toBe("Path not found, invilid review_id");
+          expect(body.message).toBe("Path not found, invalid review_id");
         });
     });
     test("400: bad request if review_id is not a number", () => {
@@ -382,7 +382,7 @@ describe("/api/reviews/:review_id/comments", () => {
         })
         .expect(404)
         .then(({ body }) => {
-          expect(body.message).toBe("Path not found, invilid review_id");
+          expect(body.message).toBe("Path not found, invalid review_id");
         });
     });
     test("400: bad request if username is not the correct one", () => {
@@ -391,7 +391,7 @@ describe("/api/reviews/:review_id/comments", () => {
         .send({ username: "testing", body: "Something valuable for our TESTS" })
         .expect(404)
         .then(({ body }) => {
-          expect(body.message).toBe("Path not found, invilid username");
+          expect(body.message).toBe("Path not found, invalid username");
         });
     });
     test("400: bad request if review_id is not a number", () => {
@@ -445,7 +445,7 @@ describe("/api/comments/:comment_id", () => {
         .delete("/api/comments/9999")
         .expect(404)
         .then(({ body }) => {
-          expect(body.message).toBe("Path not found, invilid comment_id");
+          expect(body.message).toBe("Path not found, invalid comment_id");
         });
     });
     test("400: bad request if review_id is not a number", () => {

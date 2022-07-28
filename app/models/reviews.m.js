@@ -24,7 +24,7 @@ exports.selectReviewById = (id) => {
         } else {
           return Promise.reject({
             status: 404,
-            message: "Path not found, invilid review_id",
+            message: "Path not found, invalid review_id",
           });
         }
       });
@@ -68,7 +68,7 @@ exports.updateReviewById = (id, votes) => {
           } else {
             return Promise.reject({
               status: 404,
-              message: "Path not found, invilid review_id",
+              message: "Path not found, invalid review_id",
             });
           }
         });

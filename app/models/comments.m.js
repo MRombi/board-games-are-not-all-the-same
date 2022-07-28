@@ -19,7 +19,7 @@ exports.selectCommentById = (id) => {
           } else {
             return Promise.reject({
               status: 404,
-              message: "Path not found, invilid comment_id",
+              message: "Path not found, invalid comment_id",
             });
           }
         });
@@ -90,7 +90,7 @@ exports.insertCommentByReviewId = (id, comments) => {
           } else {
             return Promise.reject({
               status: 404,
-              message: "Path not found, invilid review_id",
+              message: "Path not found, invalid review_id",
             });
           }
         });
