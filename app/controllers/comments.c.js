@@ -29,7 +29,7 @@ exports.postCommentByReviewId = (req, res, next) => {
   const { username } = req.body;
   const allPromises = Promise.all([
     selectReviewById(review_id),
-    checkUsernameById(review_id, username),
+    checkUsernameById( username),
     insertCommentByReviewId(review_id, req.body),
   ]);
   allPromises

@@ -1,16 +1,16 @@
 const connection = require("../db/connection");
 
-exports.checkUsernameById = (id, username) => {
+exports.checkUsernameById = (username) => {
   if (username !== "string") {
     return connection
       .query(
         `
         SELECT 
-        owner
-        FROM reviews
-        WHERE review_id = $1 AND owner = $2;
+        username
+        FROM users
+        WHERE username = $1;
   `,
-        [id, username]
+        [username]
       )
       .then((result) => {
         if (result.rows.length > 0) {
@@ -18,7 +18,7 @@ exports.checkUsernameById = (id, username) => {
         } else {
           return Promise.reject({
             status: 404,
-            message: "Path not found, invilid username",
+            message: "Path not found, invalid username",
           });
         }
       });
