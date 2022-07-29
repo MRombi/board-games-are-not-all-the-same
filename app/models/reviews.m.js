@@ -108,6 +108,7 @@ exports.selectReviews = async ({
     "category",
     "created_at",
     "votes",
+    "comment_count"
   ]);
   let checkSortOptions = sortByOptions.has(sort_by);
 
